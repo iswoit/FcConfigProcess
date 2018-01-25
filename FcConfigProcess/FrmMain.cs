@@ -189,9 +189,76 @@ namespace FcConfigProcess
                 INIHelper.Write("yyb", tmpKey, tmpValue, filePath);
 
 
+
                 // 4.[fjfile]段根据推荐项进行复制
                 INIHelper.GetAllKeyValues("fjfile", out keys, out values, filePath);
 
+                // 整理好的字典，后期替换原配置文件的[fjfile]段
+                Dictionary<string, string> dicNew = new Dictionary<string, string>();
+                int sourceNum = -1;
+                int sourceNumMax = -1;
+                bool isRefFound = false;
+                string refValue = string.Empty;
+
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    /* 1.如果key是sourX，解析出X值，更新到变量；判断上一个sourX是否找到参考项，有的话解析出后插入dicNew
+                     * 2.如果key是DestXY，解析出X和Y（Y是3位数字）：如果X和当前变量不一致，报错。同时记录Y的最大值(要验证递增)。
+                     */
+
+                    if (Regex.IsMatch(keys[i], @"^sour\d{1,}$")) // 匹配到sourX
+                    {
+                        string tmpStr = keys[i].Substring(4).Trim();
+                        if (!int.TryParse(tmpStr, out sourceNum))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(sour+数字)!操作中断!", keys[i]));
+
+                        sourceNumMax = 0;
+                        isRefFound = false;
+                        refValue = string.Empty;
+                    }
+                    else if (Regex.IsMatch(keys[i], @"^Dest\d{1,}$"))    // 匹配到DestXYYY
+                    {
+                        // 判断格式长度
+                        string tmpStr = keys[i].Substring(4).Trim();    // XYYY数字串
+                        if (tmpStr.Length != sourceNum.ToString().Length + 3)
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(Dest+sour数字+3位序号)!操作中断!", keys[i]));
+
+                        // 判断X位是否匹配
+                        int tmpX = -999;
+                        if (!int.TryParse(tmpStr.Substring(0, 1), out tmpX))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(Dest+sour数字+3位序号)!操作中断!", keys[i]));
+                        if (tmpX != sourceNum)
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY没有紧跟sourX)!操作中断!", keys[i]));
+
+                        // 解析YYY，并且需要比之前的大1
+                        int tmpYYY = 0;
+                        if (!int.TryParse(tmpStr.Substring(1), out tmpYYY))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY，YYY必须为数字)!操作中断!", keys[i]));
+                        if (tmpYYY == sourceNumMax + 1)
+                            sourceNumMax++;
+                        else
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY，YYY必须为上一行的值加1，不连续)!操作中断!", keys[i]));
+
+                        // 查找参考项
+                        if (values[i].Contains(stockHolderRef))
+                        {
+                            if (isRefFound == true)
+                                throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(参考项判断，在sour下有重复)!操作中断!", keys[i]));
+                            else if (isRefFound == false)  // 找到参考股东号，重新定义格式(格式为4段，第一段截取\后的)
+                            {
+                                isRefFound = true;
+
+                                // 处理新的参数
+                                string[] tmpArr = values[i].Split(',');
+                                if (tmpArr.Length != 4)
+                                    throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(Dest应该为4部分)!操作中断!", keys[i]));
+
+                                refValue = 
+                            }
+                        }
+                    }
+
+                }
 
 
                 //INIHelper.EraseSection("fjfile", filePath);

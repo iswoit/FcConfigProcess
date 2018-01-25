@@ -105,7 +105,7 @@ namespace FcConfigProcess
         /// <returns></returns>
         public static int GetAllKeyValues(string section, out string[] keys, out string[] values, string path)
         {
-            byte[] b = new byte[65535];//配置节下的所有信息
+            byte[] b = new byte[6553500];//配置节下的所有信息
             GetPrivateProfileSection(section, b, b.Length, path);
             string s = System.Text.Encoding.Default.GetString(b);//配置信息
             string[] tmp = s.Split((char)0);//Key\Value信息
