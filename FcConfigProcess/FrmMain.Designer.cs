@@ -43,10 +43,10 @@
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.tbOrganization = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.tbProductName = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.tbOrganization = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -140,15 +140,16 @@
             this.tbStockHolderReference.Name = "tbStockHolderReference";
             this.tbStockHolderReference.Size = new System.Drawing.Size(135, 21);
             this.tbStockHolderReference.TabIndex = 13;
+            this.tbStockHolderReference.Text = "hfz_03";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(18, 168);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(107, 12);
+            this.label5.Size = new System.Drawing.Size(95, 12);
             this.label5.TabIndex = 12;
-            this.label5.Text = "参考股东账号别名:";
+            this.label5.Text = "参考股东号别名:";
             // 
             // btnExecute
             // 
@@ -199,22 +200,13 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "新增营业部参数";
             // 
-            // label7
+            // tbProductName
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(292, 69);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(59, 12);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "机构简称:";
-            // 
-            // tbOrganization
-            // 
-            this.tbOrganization.Location = new System.Drawing.Point(357, 66);
-            this.tbOrganization.Name = "tbOrganization";
-            this.tbOrganization.Size = new System.Drawing.Size(86, 21);
-            this.tbOrganization.TabIndex = 18;
-            this.tbOrganization.Text = "XX投资";
+            this.tbProductName.Location = new System.Drawing.Point(531, 66);
+            this.tbProductName.Name = "tbProductName";
+            this.tbProductName.Size = new System.Drawing.Size(140, 21);
+            this.tbProductName.TabIndex = 20;
+            this.tbProductName.Text = "XXX5号";
             // 
             // label8
             // 
@@ -225,13 +217,22 @@
             this.label8.TabIndex = 19;
             this.label8.Text = "产品名称:";
             // 
-            // tbProductName
+            // tbOrganization
             // 
-            this.tbProductName.Location = new System.Drawing.Point(531, 66);
-            this.tbProductName.Name = "tbProductName";
-            this.tbProductName.Size = new System.Drawing.Size(140, 21);
-            this.tbProductName.TabIndex = 20;
-            this.tbProductName.Text = "XXX5号";
+            this.tbOrganization.Location = new System.Drawing.Point(357, 66);
+            this.tbOrganization.Name = "tbOrganization";
+            this.tbOrganization.Size = new System.Drawing.Size(86, 21);
+            this.tbOrganization.TabIndex = 18;
+            this.tbOrganization.Text = "XX投资";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(292, 69);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 12);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "机构简称:";
             // 
             // tbLog
             // 
