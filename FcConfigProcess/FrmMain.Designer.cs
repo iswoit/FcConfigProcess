@@ -40,7 +40,7 @@
             this.tbStockHolderReference = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.tbDestPath = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbProductName = new System.Windows.Forms.TextBox();
@@ -56,14 +56,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(34, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 12);
+            this.label1.Size = new System.Drawing.Size(131, 12);
             this.label1.TabIndex = 0;
-            this.label1.Text = "配置文件:";
+            this.label1.Text = "配置文件(请注意备份):";
             // 
             // tbFilePath
             // 
             this.tbFilePath.BackColor = System.Drawing.SystemColors.Window;
-            this.tbFilePath.Location = new System.Drawing.Point(99, 20);
+            this.tbFilePath.Location = new System.Drawing.Point(171, 20);
             this.tbFilePath.Name = "tbFilePath";
             this.tbFilePath.ReadOnly = true;
             this.tbFilePath.Size = new System.Drawing.Size(395, 21);
@@ -72,7 +72,7 @@
             // 
             // btnSelFile
             // 
-            this.btnSelFile.Location = new System.Drawing.Point(500, 18);
+            this.btnSelFile.Location = new System.Drawing.Point(572, 18);
             this.btnSelFile.Name = "btnSelFile";
             this.btnSelFile.Size = new System.Drawing.Size(50, 23);
             this.btnSelFile.TabIndex = 2;
@@ -153,7 +153,7 @@
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(684, 395);
+            this.btnExecute.Location = new System.Drawing.Point(719, 429);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(84, 27);
             this.btnExecute.TabIndex = 14;
@@ -161,12 +161,13 @@
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
-            // textBox7
+            // tbDestPath
             // 
-            this.textBox7.Location = new System.Drawing.Point(131, 101);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(351, 21);
-            this.textBox7.TabIndex = 16;
+            this.tbDestPath.Location = new System.Drawing.Point(131, 101);
+            this.tbDestPath.Name = "tbDestPath";
+            this.tbDestPath.Size = new System.Drawing.Size(351, 21);
+            this.tbDestPath.TabIndex = 16;
+            this.tbDestPath.Text = "E:\\FtpRoot\\清算文件目录\\aaaa\\XXX5号";
             // 
             // label6
             // 
@@ -184,7 +185,7 @@
             this.groupBox1.Controls.Add(this.tbOrganization);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox7);
+            this.groupBox1.Controls.Add(this.tbDestPath);
             this.groupBox1.Controls.Add(this.tbClientID);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label3);
@@ -277,7 +278,7 @@
         private System.Windows.Forms.TextBox tbStockHolderReference;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnExecute;
-        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox tbDestPath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox tbProductName;
