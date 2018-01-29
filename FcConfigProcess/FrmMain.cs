@@ -178,6 +178,12 @@ namespace FcConfigProcess
                 }
 
 
+                if(string.IsNullOrEmpty(yybRef))
+                {
+                    MessageBox.Show(string.Format(@"没有找到参考股东号{0}对应的营业部！请检查配置文件！", stockHolderRef));
+                    tbStockHolderReference.Focus();
+                    return;
+                }
 
 
                 newMaxNum++;    // 搜索出来的最大值+1就是新的id
@@ -361,6 +367,11 @@ namespace FcConfigProcess
                     tbFilePath.Text = dlg.FileName;
                 }
             }
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

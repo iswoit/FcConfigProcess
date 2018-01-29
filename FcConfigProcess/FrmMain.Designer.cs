@@ -47,7 +47,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.tbOrganization = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.tbLog = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +67,6 @@
             this.tbFilePath.ReadOnly = true;
             this.tbFilePath.Size = new System.Drawing.Size(395, 21);
             this.tbFilePath.TabIndex = 1;
-            this.tbFilePath.Text = "D:\\我的文档\\Desktop\\qsjm20180119new.ini";
             // 
             // btnSelFile
             // 
@@ -96,7 +94,6 @@
             this.tbClientID.Name = "tbClientID";
             this.tbClientID.Size = new System.Drawing.Size(135, 21);
             this.tbClientID.TabIndex = 7;
-            this.tbClientID.Text = "111111111111";
             // 
             // label3
             // 
@@ -114,7 +111,6 @@
             this.tbYYB.Name = "tbYYB";
             this.tbYYB.Size = new System.Drawing.Size(135, 21);
             this.tbYYB.TabIndex = 9;
-            this.tbYYB.Text = "aaaa01";
             // 
             // tbStockHolder
             // 
@@ -123,7 +119,6 @@
             this.tbStockHolder.Name = "tbStockHolder";
             this.tbStockHolder.Size = new System.Drawing.Size(103, 21);
             this.tbStockHolder.TabIndex = 11;
-            this.tbStockHolder.Text = "aaa_01";
             // 
             // label4
             // 
@@ -153,7 +148,7 @@
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(719, 429);
+            this.btnExecute.Location = new System.Drawing.Point(621, 337);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(84, 27);
             this.btnExecute.TabIndex = 14;
@@ -167,7 +162,7 @@
             this.tbDestPath.Name = "tbDestPath";
             this.tbDestPath.Size = new System.Drawing.Size(351, 21);
             this.tbDestPath.TabIndex = 16;
-            this.tbDestPath.Text = "E:\\FtpRoot\\清算文件目录\\aaaa\\XXX5号";
+            this.tbDestPath.Text = "E:\\FtpRoot\\清算文件目录\\[营业部代码去掉数字]\\[产品名称]";
             // 
             // label6
             // 
@@ -207,7 +202,6 @@
             this.tbProductName.Name = "tbProductName";
             this.tbProductName.Size = new System.Drawing.Size(140, 21);
             this.tbProductName.TabIndex = 20;
-            this.tbProductName.Text = "XXX5号";
             // 
             // label8
             // 
@@ -224,7 +218,6 @@
             this.tbOrganization.Name = "tbOrganization";
             this.tbOrganization.Size = new System.Drawing.Size(86, 21);
             this.tbOrganization.TabIndex = 18;
-            this.tbOrganization.Text = "XX投资";
             // 
             // label7
             // 
@@ -235,21 +228,11 @@
             this.label7.TabIndex = 17;
             this.label7.Text = "机构简称:";
             // 
-            // tbLog
-            // 
-            this.tbLog.Location = new System.Drawing.Point(12, 365);
-            this.tbLog.Multiline = true;
-            this.tbLog.Name = "tbLog";
-            this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLog.Size = new System.Drawing.Size(634, 115);
-            this.tbLog.TabIndex = 19;
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1102, 551);
-            this.Controls.Add(this.tbLog);
+            this.ClientSize = new System.Drawing.Size(738, 384);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.btnSelFile);
@@ -257,6 +240,7 @@
             this.Controls.Add(this.label1);
             this.Name = "FrmMain";
             this.Text = "分仓配置文件增加产品";
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -285,7 +269,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox tbOrganization;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox tbLog;
     }
 }
 
