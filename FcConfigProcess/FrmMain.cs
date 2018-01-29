@@ -16,6 +16,28 @@ namespace FcConfigProcess
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 配置文件选择-新增产品
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSelFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.Filter = "配置文件(*.ini)|*.ini|所有文件(*.*)|*.*";
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    tbFilePath.Text = dlg.FileName;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 新增产品逻辑
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnExecute_Click(object sender, EventArgs e)
         {
 
@@ -178,7 +200,7 @@ namespace FcConfigProcess
                 }
 
 
-                if(string.IsNullOrEmpty(yybRef))
+                if (string.IsNullOrEmpty(yybRef))
                 {
                     MessageBox.Show(string.Format(@"没有找到参考股东号{0}对应的营业部！请检查配置文件！", stockHolderRef));
                     tbStockHolderReference.Focus();
@@ -357,21 +379,97 @@ namespace FcConfigProcess
 
         }
 
-        private void btnSelFile_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 配置文件选择-删除产品
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSelDelFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 dlg.Filter = "配置文件(*.ini)|*.ini|所有文件(*.*)|*.*";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    tbFilePath.Text = dlg.FileName;
+                    tbDelFilePath.Text = dlg.FileName;
                 }
             }
         }
 
-        private void FrmMain_Load(object sender, EventArgs e)
+        /// <summary>
+        /// 删除产品逻辑
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDelExecute_Click(object sender, EventArgs e)
         {
+            /* 1.通过股东账号别名，搜索[gdzhlb]的条目和数字.删除
+             * 2.[yyb]的条目和数字。删除
+             * 3.删除[营业部]节
+             * 4.删除[fjfile]中关于此股东账号别名的行
+             * 
+             * 以上删除的，需要重排所有序号
+             * 
+             */
+
+
+            // 0.输入参数准备
+            string filePath = tbDelFilePath.Text.Trim();                // 配置文件路径（删除用）
+            string stockHolder = tbDelStockHolder.Text.Trim();          // 股东号别名(删除用，要按回车处理)
+            List<string> listStockHolder = new List<string>();          // 股东号别名列表
+            string[] keys, values;                                      // 用来查ini的临时变量
+
+            // 文件路径
+            if (filePath.Length == 0)
+            {
+                MessageBox.Show("请选择配置文件!");
+                btnSelDelFile.Focus();
+                return;
+            }
+
+            // 股东号别名
+            if (string.IsNullOrEmpty(stockHolder))
+            {
+                MessageBox.Show("请至少输入一个股东号别名!");
+                tbDelStockHolder.Focus();
+                return;
+            }
+
+            string[] arrTmp = stockHolder.Split(Environment.NewLine.ToCharArray());
+            foreach (string tmp in arrTmp)
+            {
+                if (!string.IsNullOrEmpty(tmp.Trim()))
+                    listStockHolder.Add(tmp.Trim());
+            }
+
+
+            // 1.处理[ddzhlb]：（要找id，对应[yyb]的数据要删，对应[yyb]的yyb代码要找出来删）
+            INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
+            for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
+            {
+                if (Regex.IsMatch(keys[i], @"^gdzh\d{1,}$"))
+                {
+                    string[] arrGDZHLB = values[i].Split(',');  // 第0个是股东号别名
+                    if(listStockHolder.Contains(arrGDZHLB[0].Trim()))   // 如果是在删除名单内，处理
+                    {
+                        // 获取yyb（为了删除yyb和[营业部]节）
+                        string yybKey = string.Format(@"{0}{1}");
+
+
+                        // 删除[营业部]节
+
+                        // 遍历[fjfile]节，删除所有DestXXX包含营业部别名的键值
+                    }
+
+                }
+            }
+
+
+
+            // 2.涉及的节重新排序
 
         }
+
+
     }
 }
