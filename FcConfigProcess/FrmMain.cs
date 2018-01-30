@@ -403,6 +403,12 @@ namespace FcConfigProcess
         /// <param name="e"></param>
         private void btnDelExecute_Click(object sender, EventArgs e)
         {
+            DialogResult dr = MessageBox.Show("确认删除产品？", "确认", MessageBoxButtons.OKCancel);
+            if (dr == DialogResult.Cancel)
+                return;
+
+
+
             /* 1.通过股东账号别名，搜索[gdzhlb]的条目和数字.删除
              * 2.删除[yyb]的条目和数字
              * 3.删除[营业部]节
@@ -419,6 +425,7 @@ namespace FcConfigProcess
                 string filePath = tbDelFilePath.Text.Trim();                // 配置文件路径（删除用）
                 string stockHolder = tbDelStockHolder.Text.Trim();          // 股东号别名(删除用，要按回车处理)
                 List<string> listStockHolder = new List<string>();          // 股东号别名列表
+                Dictionary<string, string> dicStkHolderYYB = new Dictionary<string, string>();      // dic
                 string[] keys, values;                                      // 用来查ini的临时变量
 
                 // 文件路径
@@ -471,6 +478,10 @@ namespace FcConfigProcess
                                 INIHelper.DeleteKey("yyb", yybKey, filePath);       // 2.删除[yyb]的条目和数字
 
                                 INIHelper.EraseSection(yyb, filePath);              // 3.删除[营业部]节
+
+
+                                // 临时，校验用
+                                dicStkHolderYYB.Add(arrGDZHLB[0].Trim(), yyb);
                             }
                             else
                             {
@@ -496,8 +507,15 @@ namespace FcConfigProcess
                         string[] arrFJFILE = values[i].Split(',');  // 第4个是股东号别名
                         string tmpStockHolder = arrFJFILE[3].Trim();
 
+
+
                         if (listStockHolder.Contains(tmpStockHolder))    // 删除
                         {
+                            // 多一个股东号别名+营业部的校验
+                            if (dicStkHolderYYB[tmpStockHolder] != arrFJFILE[0].Split('\\')[0].Trim())
+                                throw new Exception(string.Format("{0}配置项营业部和股东号别名对不上![yyb]为{0}，当前配置为{2}", keys[i], dicStkHolderYYB[tmpStockHolder], arrFJFILE[0].Split('\\')[0].Trim()));
+
+
                             INIHelper.DeleteKey("fjfile", keys[i], filePath);
                         }
                     }
