@@ -404,7 +404,7 @@ namespace FcConfigProcess
         private void btnDelExecute_Click(object sender, EventArgs e)
         {
             /* 1.通过股东账号别名，搜索[gdzhlb]的条目和数字.删除
-             * 2.[yyb]的条目和数字。删除
+             * 2.删除[yyb]的条目和数字
              * 3.删除[营业部]节
              * 4.删除[fjfile]中关于此股东账号别名的行
              * 
@@ -413,61 +413,212 @@ namespace FcConfigProcess
              */
 
 
-            // 0.输入参数准备
-            string filePath = tbDelFilePath.Text.Trim();                // 配置文件路径（删除用）
-            string stockHolder = tbDelStockHolder.Text.Trim();          // 股东号别名(删除用，要按回车处理)
-            List<string> listStockHolder = new List<string>();          // 股东号别名列表
-            string[] keys, values;                                      // 用来查ini的临时变量
-
-            // 文件路径
-            if (filePath.Length == 0)
+            try
             {
-                MessageBox.Show("请选择配置文件!");
-                btnSelDelFile.Focus();
-                return;
-            }
+                // 0.输入参数准备
+                string filePath = tbDelFilePath.Text.Trim();                // 配置文件路径（删除用）
+                string stockHolder = tbDelStockHolder.Text.Trim();          // 股东号别名(删除用，要按回车处理)
+                List<string> listStockHolder = new List<string>();          // 股东号别名列表
+                string[] keys, values;                                      // 用来查ini的临时变量
 
-            // 股东号别名
-            if (string.IsNullOrEmpty(stockHolder))
-            {
-                MessageBox.Show("请至少输入一个股东号别名!");
-                tbDelStockHolder.Focus();
-                return;
-            }
-
-            string[] arrTmp = stockHolder.Split(Environment.NewLine.ToCharArray());
-            foreach (string tmp in arrTmp)
-            {
-                if (!string.IsNullOrEmpty(tmp.Trim()))
-                    listStockHolder.Add(tmp.Trim());
-            }
-
-
-            // 1.处理[ddzhlb]：（要找id，对应[yyb]的数据要删，对应[yyb]的yyb代码要找出来删）
-            INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
-            for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
-            {
-                if (Regex.IsMatch(keys[i], @"^gdzh\d{1,}$"))
+                // 文件路径
+                if (filePath.Length == 0)
                 {
-                    string[] arrGDZHLB = values[i].Split(',');  // 第0个是股东号别名
-                    if(listStockHolder.Contains(arrGDZHLB[0].Trim()))   // 如果是在删除名单内，处理
-                    {
-                        // 获取yyb（为了删除yyb和[营业部]节）
-                        string yybKey = string.Format(@"{0}{1}");
-
-
-                        // 删除[营业部]节
-
-                        // 遍历[fjfile]节，删除所有DestXXX包含营业部别名的键值
-                    }
-
+                    MessageBox.Show("请选择配置文件!");
+                    btnSelDelFile.Focus();
+                    return;
                 }
+
+                // 股东号别名
+                if (string.IsNullOrEmpty(stockHolder))
+                {
+                    MessageBox.Show("请至少输入一个股东号别名!");
+                    tbDelStockHolder.Focus();
+                    return;
+                }
+
+                string[] arrTmp = stockHolder.Split(Environment.NewLine.ToCharArray());
+                foreach (string tmp in arrTmp)
+                {
+                    if (!string.IsNullOrEmpty(tmp.Trim()))
+                        listStockHolder.Add(tmp.Trim());
+                }
+
+
+                #region 1.删除数据
+                // 1.处理[ddzhlb]：（要找id，对应[yyb]的数据要删，对应[yyb]的yyb代码要找出来删）
+                INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
+                for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
+                {
+                    if (Regex.IsMatch(keys[i], @"^gdzh\d{1,}$"))
+                    {
+                        string[] arrGDZHLB = values[i].Split(',');  // 第0个是股东号别名
+                        if (listStockHolder.Contains(arrGDZHLB[0].Trim()))   // 如果是在删除名单内，处理
+                        {
+                            // 获取yyb（为了删除yyb和[营业部]节）
+                            string yybKey = string.Format(@"yyb{0}", keys[i].Substring(4)); //营业部的key键
+
+                            if (INIHelper.ExistKey("yyb", yybKey, filePath))
+                            {
+                                string yybValue = INIHelper.Read("yyb", yybKey, filePath);
+                                string yyb = yybValue.Split(',')[0].Trim();    // 营业部
+
+
+                                //********重要逻辑，开始删了
+                                INIHelper.DeleteKey("gdzhlb", keys[i], filePath);   // 删除[gdzhlb]的gdzh
+                                INIHelper.DeleteKey("gdzhlb", string.Format(@"sql{0}", keys[i].Substring(4)), filePath);    // 删除[gdzhlb]的sql
+
+                                INIHelper.DeleteKey("yyb", yybKey, filePath);       // 2.删除[yyb]的条目和数字
+
+                                INIHelper.EraseSection(yyb, filePath);              // 3.删除[营业部]节
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format(@"营业部{0}不存在，请检查配置文件！", yybKey));
+                            }
+
+
+                            // 删除[营业部]节
+
+                            // 遍历[fjfile]节，删除所有DestXXX包含营业部别名的键值
+                        }
+
+                    }
+                }
+
+
+                // 4.删除[fjfile]中关于此股东账号别名的行
+                INIHelper.GetAllKeyValues("fjfile", out keys, out values, filePath);
+                for (int i = 0; i < keys.Length; i++)       // 遍历[fjfile]节，找是否在删除名单内
+                {
+                    if (Regex.IsMatch(keys[i], @"^Dest\d{1,}$"))
+                    {
+                        string[] arrFJFILE = values[i].Split(',');  // 第4个是股东号别名
+                        string tmpStockHolder = arrFJFILE[3].Trim();
+
+                        if (listStockHolder.Contains(tmpStockHolder))    // 删除
+                        {
+                            INIHelper.DeleteKey("fjfile", keys[i], filePath);
+                        }
+                    }
+                }
+                #endregion 1.删除数据
+
+
+                #region 2.重新排序
+
+                // 1.[gdzhlb]重排
+                Dictionary<string, string> dicNewGDZHLB = new Dictionary<string, string>();
+                // 插入注释
+                dicNewGDZHLB.Add(@"&&股东帐号别名配置段", string.Empty);
+                dicNewGDZHLB.Add(@"&&gdzh?", @"别名(只取前6位),帐号来源(sql或dbf),sql语句别名或dbf库文件名,sql数据库连接别名或dbf帐号字段名(默认为gdh)");
+                dicNewGDZHLB.Add(@"&&sql语句别名", @"sql语句(结果中必须包含GDH字段)");
+
+                int iNewCnt = 1;    // 新序号
+                INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
+                for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
+                {
+                    if (Regex.IsMatch(keys[i], @"^gdzh\d{1,}$"))
+                    {
+                        string[] tmpArr = values[i].Split(',');
+                        if (tmpArr.Length != 4)
+                            throw new Exception(keys[i] + "值没有分4段，请检查！");
+
+                        if (!INIHelper.ExistKey("gdzhlb", tmpArr[2].Trim(), filePath))
+                            throw new Exception(tmpArr[2].Trim() + "不存在，请检查！");
+
+                        string tmpSqlValue = INIHelper.Read("gdzhlb", tmpArr[2].Trim(), filePath);
+
+                        // 插入dicNewGDZHLB字典
+                        dicNewGDZHLB.Add(string.Format(@"gdzh{0}", iNewCnt), string.Format(@"{0},{1},sql{2},{3}", tmpArr[0], tmpArr[1], iNewCnt, tmpArr[3]));
+                        dicNewGDZHLB.Add(string.Format(@"sql{0}", iNewCnt), tmpSqlValue);
+
+                        iNewCnt++;
+                    }
+                }
+
+                // 清除再插入
+                INIHelper.EraseSection("gdzhlb", filePath);     // 先清空
+                foreach (KeyValuePair<string, string> tmpKV in dicNewGDZHLB)
+                {
+                    INIHelper.Write("gdzhlb", tmpKV.Key, tmpKV.Value, filePath);
+                }
+
+
+
+                // 2.[yyb]重排
+                iNewCnt = 1;
+                Dictionary<string, string> dicNewYYB = new Dictionary<string, string>();
+                INIHelper.GetAllKeyValues("yyb", out keys, out values, filePath);
+                for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
+                {
+                    if (Regex.IsMatch(keys[i], @"^yyb\d{1,}$"))
+                    {
+                        dicNewYYB.Add(string.Format(@"yyb{0}", iNewCnt), values[i]);
+
+                        iNewCnt++;
+                    }
+                }
+
+                // 清除再插入
+                INIHelper.EraseSection("yyb", filePath);     // 先清空
+                foreach (KeyValuePair<string, string> tmpKV in dicNewYYB)
+                {
+                    INIHelper.Write("yyb", tmpKV.Key, tmpKV.Value, filePath);
+                }
+
+
+
+                // 3.[fjfile]重排
+                iNewCnt = 1;
+                Dictionary<string, string> dicNewFJFILE = new Dictionary<string, string>();
+                dicNewFJFILE.Add(@"&&分解库文件段配置", string.Empty);
+                dicNewFJFILE.Add(@"&&sour?", @"库文件名,类型别名");
+                dicNewFJFILE.Add(@"&&dest???", @"目的文件(空表示不分解),分支席位号-...,起始合同号-结束合同号|...,股东帐号别名");
+
+                int sourceNum = -1; // 当前的sour值
+                INIHelper.GetAllKeyValues("fjfile", out keys, out values, filePath);
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (Regex.IsMatch(keys[i], @"^sour\d{1,}$")) // 匹配到sourX
+                    {
+                        // 开始新的sour
+                        string tmpStr = keys[i].Substring(4).Trim();
+                        if (!int.TryParse(tmpStr, out sourceNum))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(sour+数字)!操作中断!", keys[i]));
+
+                        iNewCnt = 1;
+
+                        dicNewFJFILE.Add(keys[i], values[i]);   // sour的保留
+                    }
+                    else if (Regex.IsMatch(keys[i], @"^Dest\d{1,}$"))    // 匹配到DestXYYY
+                    {
+                        if (sourceNum == -1)
+                            throw new Exception("[fjfile]有问题，不是以sour开始!");
+
+                        string tmpKey = string.Format(@"Dest{0}{1}", sourceNum, iNewCnt.ToString().PadLeft(3, '0'));
+                        dicNewFJFILE.Add(tmpKey, values[i]);
+
+                        iNewCnt++;
+                    }
+                }
+
+                // 清除再插入
+                INIHelper.EraseSection("fjfile", filePath);     // 先清空
+                foreach (KeyValuePair<string, string> tmpKV in dicNewFJFILE)
+                {
+                    INIHelper.Write("fjfile", tmpKV.Key, tmpKV.Value, filePath);
+                }
+
+
+                #endregion 2.重新排序
+
+                MessageBox.Show("删除产品处理完成!");
             }
-
-
-
-            // 2.涉及的节重新排序
-
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
 

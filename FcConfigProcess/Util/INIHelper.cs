@@ -170,6 +170,7 @@ namespace FcConfigProcess
             for (int i = 0; i < result.Count; i++)
             {
                 string[] item = result[i].ToString().Split(new char[] { '=' });
+                
                 if (item.Length == 2)
                 {
                     keys[i] = item[0].Trim();
@@ -181,6 +182,10 @@ namespace FcConfigProcess
                 else if (item.Length == 0)
                 {
                     keys[i] = "";
+                }
+                else if (item.Length>2)
+                {
+                    keys[i] = item[0].Trim();
                 }
             }
             return 0;
