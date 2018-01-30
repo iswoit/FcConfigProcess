@@ -160,7 +160,7 @@
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(635, 380);
+            this.btnExecute.Location = new System.Drawing.Point(552, 364);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(84, 27);
             this.btnExecute.TabIndex = 14;
@@ -203,7 +203,7 @@
             this.groupBox1.Controls.Add(this.tbStockHolder);
             this.groupBox1.Location = new System.Drawing.Point(26, 61);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(693, 288);
+            this.groupBox1.Size = new System.Drawing.Size(610, 288);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "新增营业部参数";
@@ -248,7 +248,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(895, 489);
+            this.tabControl1.Size = new System.Drawing.Size(657, 430);
             this.tabControl1.TabIndex = 18;
             // 
             // tabPage1
@@ -262,7 +262,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(887, 463);
+            this.tabPage1.Size = new System.Drawing.Size(649, 404);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "产品添加";
             // 
@@ -278,13 +278,13 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(887, 463);
+            this.tabPage2.Size = new System.Drawing.Size(649, 404);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "产品删除";
             // 
             // btnDelExecute
             // 
-            this.btnDelExecute.Location = new System.Drawing.Point(581, 227);
+            this.btnDelExecute.Location = new System.Drawing.Point(548, 355);
             this.btnDelExecute.Name = "btnDelExecute";
             this.btnDelExecute.Size = new System.Drawing.Size(84, 27);
             this.btnDelExecute.TabIndex = 15;
@@ -307,13 +307,13 @@
             this.tbDelStockHolder.Multiline = true;
             this.tbDelStockHolder.Name = "tbDelStockHolder";
             this.tbDelStockHolder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbDelStockHolder.Size = new System.Drawing.Size(237, 185);
+            this.tbDelStockHolder.Size = new System.Drawing.Size(340, 313);
             this.tbDelStockHolder.TabIndex = 13;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(29, 28);
+            this.label9.Location = new System.Drawing.Point(65, 26);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(131, 12);
             this.label9.TabIndex = 3;
@@ -325,12 +325,12 @@
             this.tbDelFilePath.Location = new System.Drawing.Point(202, 23);
             this.tbDelFilePath.Name = "tbDelFilePath";
             this.tbDelFilePath.ReadOnly = true;
-            this.tbDelFilePath.Size = new System.Drawing.Size(395, 21);
+            this.tbDelFilePath.Size = new System.Drawing.Size(356, 21);
             this.tbDelFilePath.TabIndex = 4;
             // 
             // btnSelDelFile
             // 
-            this.btnSelDelFile.Location = new System.Drawing.Point(615, 23);
+            this.btnSelDelFile.Location = new System.Drawing.Point(582, 21);
             this.btnSelDelFile.Name = "btnSelDelFile";
             this.btnSelDelFile.Size = new System.Drawing.Size(50, 23);
             this.btnSelDelFile.TabIndex = 5;
@@ -342,7 +342,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(895, 489);
+            this.ClientSize = new System.Drawing.Size(657, 430);
             this.Controls.Add(this.tabControl1);
             this.Name = "FrmMain";
             this.Text = "分仓配置文件增加&删除产品";

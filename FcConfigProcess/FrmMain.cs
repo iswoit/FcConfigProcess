@@ -41,6 +41,10 @@ namespace FcConfigProcess
         private void btnExecute_Click(object sender, EventArgs e)
         {
 
+            DialogResult dr = MessageBox.Show("确认添加产品(一旦提示异常请恢复备份文件)？", "确认", MessageBoxButtons.OKCancel);
+            if (dr == DialogResult.Cancel)
+                return;
+
             try
             {
                 /* 处理逻辑
@@ -403,7 +407,7 @@ namespace FcConfigProcess
         /// <param name="e"></param>
         private void btnDelExecute_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确认删除产品？", "确认", MessageBoxButtons.OKCancel);
+            DialogResult dr = MessageBox.Show("确认删除产品(一旦提示异常请恢复备份文件)？", "确认", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.Cancel)
                 return;
 
