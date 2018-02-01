@@ -644,5 +644,180 @@ namespace FcConfigProcess
         }
 
 
+        private void btnSelCheck_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.Filter = "配置文件(*.ini)|*.ini|所有文件(*.*)|*.*";
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    tbCheckFilePath.Text = dlg.FileName;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 检查文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCheck_Click(object sender, EventArgs e)
+        {
+            string filePath = tbCheckFilePath.Text.Trim();               // 文件路径
+
+            // 文件路径
+            if (filePath.Length == 0)
+            {
+                MessageBox.Show("请选择配置文件!");
+                btnSelCheckFile.Focus();
+                return;
+            }
+
+            /* 1.检查[gdzhlb]是否按顺序排列、sqlx是否有对应的存在
+             * 2.检查[yyb]是否按照顺序排列、与1检查结果形成键值对
+             * 3.检查[营业部]节是否存在
+             * 4.检查[fjfile]节、sourX后跟DestXYYY，YYY按升序排列。同时满足2和1形成的键值对
+             * 
+             */
+
+            try
+            {
+                Dictionary<string, string> dicCheck = new Dictionary<string, string>();
+
+                string[] keys, values;                                      // 用来查ini的临时变量
+
+                // 1.检查[gdzhlb]、2.检查[yyb]
+                INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
+                int iGDZHCnt = 0;   // gdzh的序列
+                for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
+                {
+                    if (Regex.IsMatch(keys[i], @"^gdzh\d{1,}$"))
+                    {
+                        int iTmp;
+                        if (!int.TryParse(keys[i].Substring(4).Trim(), out iTmp))
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}命名不合法，应该为gdzh+数字", keys[i]));
+
+                        if (iTmp != iGDZHCnt + 1)
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}命名不合法，与上一个gdzh不连续", keys[i]));
+
+                        string[] tmpArr = values[i].Split(',');
+                        if (tmpArr.Length != 4)
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}的值不合法，应该为4个", keys[i]));
+
+                        string tmpKey = tmpArr[2].Trim();
+                        if (!Regex.IsMatch(tmpKey, @"^sql\d{1,}$"))
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}的值不合法，第3列应该为sql+数字", keys[i]));
+
+                        if (!INIHelper.ExistKey("gdzhlb", tmpKey, filePath))
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}缺少与之对应的键{1}", keys[i], tmpKey));
+
+
+                        // 同时检查[yyb]，并形成键值对
+                        if (!INIHelper.ExistKey("yyb", string.Format(@"yyb{0}", iTmp), filePath))
+                            throw new Exception(string.Format(@"[gdzhlb]的键{0}缺少与之对应的[yyb]键yyb{1}", keys[i], iTmp));
+
+                        string tmpYYB = INIHelper.Read("yyb", string.Format(@"yyb{0}", iTmp), filePath);
+                        if (tmpYYB.Split(',').Length != 2)
+                            throw new Exception(string.Format(@"[yyb]的键yyb{0}应该有2列", iTmp));
+
+                        dicCheck.Add(tmpArr[0].Trim(), tmpYYB.Split(',')[0].Trim());    // 添加到键值对
+
+                        iGDZHCnt++;
+                    }
+                }
+
+
+                // 2.检查[营业部]
+                foreach (KeyValuePair<string, string> kv in dicCheck)
+                {
+                    if (!INIHelper.ExistSection(kv.Value, filePath))
+                        throw new Exception(string.Format(@"节[{0}]不存在，请检查！", kv.Value));
+                }
+
+
+                // 3.检查[fjfile]
+                INIHelper.GetAllKeyValues("fjfile", out keys, out values, filePath);
+
+                int sourceNum = -1;
+                int sourceNumMax = -1;
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    /* 1.如果key是sourX，解析出X值，更新到变量；判断上一个sourX是否找到参考项，有的话解析出后插入dicNew
+                     * 2.如果key是DestXY，解析出X和Y（Y是3位数字）：如果X和当前变量不一致，报错。同时记录Y的最大值(要验证递增)。
+                     */
+
+                    if (Regex.IsMatch(keys[i], @"^sour\d{1,}$")) // 匹配到sourX
+                    {
+
+                        // 开始新的sour
+                        string tmpStr = keys[i].Substring(4).Trim();
+                        if (!int.TryParse(tmpStr, out sourceNum))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(sour+数字)!操作中断!", keys[i]));
+
+                        sourceNumMax = 0;
+                    }
+                    else if (Regex.IsMatch(keys[i], @"^Dest\d{1,}$"))    // 匹配到DestXYYY
+                    {
+
+                        // 判断格式长度
+                        string tmpStr = keys[i].Substring(4).Trim();    // XYYY数字串
+                        if (tmpStr.Length != sourceNum.ToString().Length + 3)
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(Dest+sour数字+3位序号)!操作中断!", keys[i]));
+
+                        // 判断X位是否匹配
+                        int tmpX = -999;
+                        int tmpXLength = tmpStr.Length - 3; // 长度-3
+                        if (!int.TryParse(tmpStr.Substring(0, tmpStr.Length - 3), out tmpX))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(Dest+sour数字+3位序号)!操作中断!", keys[i]));
+                        if (tmpX != sourceNum)
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY没有紧跟sourX)!操作中断!", keys[i]));
+
+                        // 解析YYY，并且需要比之前的大1
+                        int tmpYYY = 0;
+                        if (!int.TryParse(tmpStr.Substring(tmpStr.Length - 3), out tmpYYY))
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY，YYY必须为数字)!操作中断!", keys[i]));
+                        if (tmpYYY == sourceNumMax + 1)
+                            sourceNumMax++;
+                        else
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(DestXYYY，YYY必须为上一行的值加1，不连续)!操作中断!", keys[i]));
+
+                        // 查找参考项
+                        string[] tmpArr = values[i].Split(',');
+                        if (tmpArr.Length != 4)
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(value必须是4列)!操作中断!", keys[i]));
+
+                        if (dicCheck.ContainsKey(tmpArr[3].Trim()))
+                        {
+                            if (dicCheck[tmpArr[3].Trim()] != tmpArr[0].Split('\\')[0].Trim())
+                                throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(营业部和股东代码别名不匹配)!操作中断!", keys[i]));
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format(@"[fjfile]的键{0}不符合规则(股东号别名不存在)!操作中断!", keys[i]));
+                        }
+
+                    }
+                }
+
+                MessageBox.Show("检查通过!");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
+        private void GeneratePathChanged(object sender, EventArgs e)
+        {
+            string strTmp = string.Empty;
+            if (tbYYB.Text.Trim().Length == 5)
+                strTmp = tbYYB.Text.Trim().Substring(0, 3);
+            else if (tbYYB.Text.Trim().Length == 6)
+                strTmp = tbYYB.Text.Trim().Substring(0, 4);
+
+            tbDestPath.Text = string.Format(@"E:\FtpRoot\清算文件目录\{0}\{1}", strTmp, tbProductName.Text);
+        }
     }
 }
