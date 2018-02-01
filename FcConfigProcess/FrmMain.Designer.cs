@@ -181,7 +181,6 @@
             this.tbDestPath.Name = "tbDestPath";
             this.tbDestPath.Size = new System.Drawing.Size(351, 21);
             this.tbDestPath.TabIndex = 16;
-            this.tbDestPath.Text = "E:\\FtpRoot\\清算文件目录\\[营业部代码去掉数字]\\[产品名称]";
             // 
             // label6
             // 
