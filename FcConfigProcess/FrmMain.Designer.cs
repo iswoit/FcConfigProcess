@@ -79,12 +79,15 @@
             // 
             // tbFilePath
             // 
+            this.tbFilePath.AllowDrop = true;
             this.tbFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.tbFilePath.Location = new System.Drawing.Point(185, 18);
             this.tbFilePath.Name = "tbFilePath";
             this.tbFilePath.ReadOnly = true;
             this.tbFilePath.Size = new System.Drawing.Size(395, 21);
             this.tbFilePath.TabIndex = 1;
+            this.tbFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFilePath_DragDrop);
+            this.tbFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFilePath_DragEnter);
             // 
             // btnSelFile
             // 

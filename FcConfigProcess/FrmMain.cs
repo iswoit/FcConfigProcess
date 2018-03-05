@@ -819,5 +819,25 @@ namespace FcConfigProcess
 
             tbDestPath.Text = string.Format(@"E:\FtpRoot\清算文件目录\{0}\{1}", strTmp, tbProductName.Text);
         }
+
+        private void tbFilePath_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Link;
+                this.tbFilePath.Cursor = System.Windows.Forms.Cursors.Arrow;  //指定鼠标形状（更好看）  
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void tbFilePath_DragDrop(object sender, DragEventArgs e)
+        {
+            string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            tbFilePath.Text = path;
+            this.tbFilePath.Cursor = System.Windows.Forms.Cursors.IBeam; //还原鼠标形状  
+        }
     }
 }
