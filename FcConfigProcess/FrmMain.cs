@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace FcConfigProcess
 {
@@ -45,6 +46,8 @@ namespace FcConfigProcess
             if (dr == DialogResult.Cancel)
                 return;
 
+            string filePath = string.Empty;         // 配置文件
+            string filePathBak = string.Empty;      // 备份的配置文件
             try
             {
                 /* 处理逻辑
@@ -55,7 +58,9 @@ namespace FcConfigProcess
 
 
                 // 0.变量
-                string filePath = tbFilePath.Text.Trim();               // 文件路径
+                filePath = tbFilePath.Text.Trim();               // 文件路径
+                filePathBak = filePath + ".bak";                // 20180910 备份路径
+
                 string clientID = tbClientID.Text.Trim();               // 客户号
                 string stockHolder = tbStockHolder.Text.Trim();         // 股东号别名
                 string yyb = tbYYB.Text.Trim();                         // 营业部
@@ -78,6 +83,9 @@ namespace FcConfigProcess
                     btnSelFile.Focus();
                     return;
                 }
+
+                // 20180910 - 先备份一个新的配置文件，如果有异常可以恢复
+                System.IO.File.Copy(filePath, filePathBak, true);
 
                 // 客户号
                 if (!Regex.IsMatch(clientID, @"^\d{12}$"))
@@ -119,6 +127,17 @@ namespace FcConfigProcess
                     return;
                 }
 
+
+                // 20180910 - 如果选深证通，要填路径
+                if (rbNormal.Checked)
+                {
+                    if (txtSZT.Text.Trim().Length <= 0)
+                    {
+                        MessageBox.Show("确保深证通文件夹名称已输入!");
+                        txtSZT.Focus();
+                        return;
+                    }
+                }
 
 
 
@@ -213,6 +232,8 @@ namespace FcConfigProcess
 
 
                 newMaxNum++;    // 搜索出来的最大值+1就是新的id
+
+
 
 
 
@@ -374,10 +395,74 @@ namespace FcConfigProcess
 
 
 
+
+
+                // 20180910 - 增加FileCopy生成
+
+                string strCompanyShort = string.Empty;
+                if (tbYYB.Text.Trim().Length == 5)
+                    strCompanyShort = tbYYB.Text.Trim().Substring(0, 3);
+                else if (tbYYB.Text.Trim().Length == 6)
+                    strCompanyShort = tbYYB.Text.Trim().Substring(0, 4);
+
+                string strFileCopy = string.Empty;
+                strFileCopy += string.Format(@"fileXXXX=d:\BJS_Files\bjsgb.dbf,E:\FtpRoot\清算文件目录\{0}\{1}\bjsgb.dbf,3", strCompanyShort, productName) + System.Environment.NewLine;
+                strFileCopy += string.Format(@"fileXXXX=e:\vsat\nqhq\nqxx.dbf,E:\FtpRoot\清算文件目录\{0}\{1}\nqxx.dbf,3", strCompanyShort, productName) + System.Environment.NewLine;
+                strFileCopy += string.Format(@"fileXXXX=e:\vsat\nqhq\nqhq.dbf,E:\FtpRoot\清算文件目录\{0}\{1}\nqhq.dbf,3", strCompanyShort, productName) + System.Environment.NewLine;
+                strFileCopy += string.Format(@"fileXXXX=E:\HFXN\QSK\xyfile\abcsjjs326.#mdd,E:\FtpRoot\清算文件目录\{0}\{1}\abcsj.dbf,3", strCompanyShort, productName) + System.Environment.NewLine;
+                strFileCopy += string.Format(@"fileXXXX=E:\HFXN\QSK\xyfile\abcsjjsx78.#mdd,E:\FtpRoot\清算文件目录\{0}\{1}\abcsj_2r.dbf,3", strCompanyShort, productName) + System.Environment.NewLine;
+                if (rbNormal.Checked)
+                    strFileCopy += string.Format(@"fileXXXX=E:\FtpRoot\清算文件目录\{0}\{1}#yyyy#mm#dd.rar,N:\qsfile\FC\{2}\{1}\{1}#yyyy#mm#dd.rar,3", strCompanyShort, productName, txtSZT.Text.Trim());
+                else if (rbJA.Checked)
+                    strFileCopy += string.Format(@"fileXXXX=E:\FtpRoot\清算文件目录\{0}\{1}#yyyy#mm#dd.rar,N:\QsFile\OFSI\YWLX\JA\{1}#yyyy#mm#dd.rar,3", strCompanyShort, productName);
+                else if (rbXYYH.Checked)
+                    strFileCopy += string.Format(@"fileXXXX=E:\FtpRoot\清算文件目录\{0}\{1}#yyyy#mm#dd.rar,S:\TA兴业银行\SEND\{1}\{1}#yyyy#mm#dd.rar,3", strCompanyShort, productName);
+
+                txtFileCopy.Text = strFileCopy;
+
+
+                // 20180910 - 增加分仓bat生成
+                string strFcBat = string.Empty;
+                strFcBat += string.Format(@"call :CheckFileDateIsToday  {0}_{1}      %FTPDir%\{2}\{1}      FL_lhjj       %FTPDir%\{2}\{1}%rq8%.rar",
+                    organization,
+                    productName,
+                    strCompanyShort);
+                strFcBat += System.Environment.NewLine;
+                strFcBat += System.Environment.NewLine;
+
+                if (rbNormal.Checked)
+                {
+                    strFcBat += string.Format(@"call :CreateOKFile  {0}_{1}       	   %FDEPDir%\{2}\{1}\{1}%rq8%.rar",
+                        organization,
+                        productName,
+                        txtSZT.Text.Trim());
+                }
+                else if (rbJA.Checked)
+                {
+                    strFcBat += string.Format(@"call :CreateOKFile  {0}_{1}       	           %FDEPJJDir%\JA\{1}%rq8%.rar",
+                        organization,
+                        productName);
+                }
+                else if (rbXYYH.Checked)
+                {
+                    strFcBat += string.Format(@"call :CreateOKFile  {0}_{1}       	   %FDEPDir2%\{1}\{1}%rq8%.rar",
+                        organization,
+                        productName);
+                }
+
+                txtFcBAT.Text = strFcBat;
+
+
+
                 MessageBox.Show("处理完成!");
+
+
+
             }
             catch (Exception ex)
             {
+                // 20180910 - 先备份一个新的配置文件，如果有异常可以恢复
+                System.IO.File.Copy(filePathBak, filePathBak, true);
                 MessageBox.Show(ex.Message);
             }
 
@@ -663,9 +748,8 @@ namespace FcConfigProcess
         /// <param name="e"></param>
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            string filePath = tbCheckFilePath.Text.Trim();               // 文件路径
-
             // 文件路径
+            string filePath = tbCheckFilePath.Text.Trim();
             if (filePath.Length == 0)
             {
                 MessageBox.Show("请选择配置文件!");
@@ -677,16 +761,21 @@ namespace FcConfigProcess
              * 2.检查[yyb]是否按照顺序排列、与1检查结果形成键值对
              * 3.检查[营业部]节是否存在
              * 4.检查[fjfile]节、sourX后跟DestXYYY，YYY按升序排列。同时满足2和1形成的键值对
-             * 
              */
 
             try
             {
                 Dictionary<string, string> dicCheck = new Dictionary<string, string>();
 
-                string[] keys, values;                                      // 用来查ini的临时变量
+                string[] keys, values;                                      // 用来存放ini的临时变量
 
                 // 1.检查[gdzhlb]、2.检查[yyb]
+                if (!INIHelper.ExistSection("gdzhlb", filePath))
+                {
+                    MessageBox.Show("配置文件中没有[gdzhlb]!请选择正确的配置文件!");
+                    return;
+                }
+
                 INIHelper.GetAllKeyValues("gdzhlb", out keys, out values, filePath);
                 int iGDZHCnt = 0;   // gdzh的序列
                 for (int i = 0; i < keys.Length; i++)       // 遍历[gdzhlb]节，找是否在删除名单内
@@ -731,7 +820,7 @@ namespace FcConfigProcess
                 foreach (KeyValuePair<string, string> kv in dicCheck)
                 {
                     if (!INIHelper.ExistSection(kv.Value, filePath))
-                        throw new Exception(string.Format(@"节[{0}]不存在，请检查！", kv.Value));
+                        throw new Exception(string.Format(@"[{0}]不存在，请检查！", kv.Value));
                 }
 
 
@@ -820,12 +909,12 @@ namespace FcConfigProcess
             tbDestPath.Text = string.Format(@"E:\FtpRoot\清算文件目录\{0}\{1}", strTmp, tbProductName.Text);
         }
 
-        private void tbFilePath_DragEnter(object sender, DragEventArgs e)
+        private void txt_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Link;
-                this.tbFilePath.Cursor = System.Windows.Forms.Cursors.Arrow;  //指定鼠标形状（更好看）  
+                ((TextBox)sender).Cursor = System.Windows.Forms.Cursors.Arrow;  //指定鼠标形状（更好看）  
             }
             else
             {
@@ -833,11 +922,11 @@ namespace FcConfigProcess
             }
         }
 
-        private void tbFilePath_DragDrop(object sender, DragEventArgs e)
+        private void txt_DragDrop(object sender, DragEventArgs e)
         {
             string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            tbFilePath.Text = path;
-            this.tbFilePath.Cursor = System.Windows.Forms.Cursors.IBeam; //还原鼠标形状  
+            ((TextBox)sender).Text = path;
+            ((TextBox)sender).Cursor = System.Windows.Forms.Cursors.IBeam; //还原鼠标形状  
         }
     }
 }

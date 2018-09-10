@@ -49,6 +49,16 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbXYYH = new System.Windows.Forms.RadioButton();
+            this.rbJA = new System.Windows.Forms.RadioButton();
+            this.txtSZT = new System.Windows.Forms.TextBox();
+            this.rbNormal = new System.Windows.Forms.RadioButton();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txtFcBAT = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtFileCopy = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnDelExecute = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
@@ -64,6 +74,7 @@
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.SuspendLayout();
@@ -86,8 +97,8 @@
             this.tbFilePath.ReadOnly = true;
             this.tbFilePath.Size = new System.Drawing.Size(395, 21);
             this.tbFilePath.TabIndex = 1;
-            this.tbFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFilePath_DragDrop);
-            this.tbFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFilePath_DragEnter);
+            this.tbFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_DragDrop);
+            this.tbFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_DragEnter);
             // 
             // btnSelFile
             // 
@@ -170,7 +181,7 @@
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(552, 345);
+            this.btnExecute.Location = new System.Drawing.Point(552, 739);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(84, 27);
             this.btnExecute.TabIndex = 14;
@@ -259,12 +270,18 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(657, 406);
+            this.tabControl1.Size = new System.Drawing.Size(665, 806);
             this.tabControl1.TabIndex = 18;
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.groupBox2);
+            this.tabPage1.Controls.Add(this.label14);
+            this.tabPage1.Controls.Add(this.txtFcBAT);
+            this.tabPage1.Controls.Add(this.label13);
+            this.tabPage1.Controls.Add(this.label12);
+            this.tabPage1.Controls.Add(this.txtFileCopy);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.tbFilePath);
@@ -273,9 +290,108 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(649, 380);
+            this.tabPage1.Size = new System.Drawing.Size(657, 780);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "产品添加";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbXYYH);
+            this.groupBox2.Controls.Add(this.rbJA);
+            this.groupBox2.Controls.Add(this.txtSZT);
+            this.groupBox2.Controls.Add(this.rbNormal);
+            this.groupBox2.Location = new System.Drawing.Point(26, 359);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(610, 60);
+            this.groupBox2.TabIndex = 24;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "深证通路径";
+            // 
+            // rbXYYH
+            // 
+            this.rbXYYH.AutoSize = true;
+            this.rbXYYH.Location = new System.Drawing.Point(372, 20);
+            this.rbXYYH.Name = "rbXYYH";
+            this.rbXYYH.Size = new System.Drawing.Size(71, 16);
+            this.rbXYYH.TabIndex = 3;
+            this.rbXYYH.Text = "兴业银行";
+            this.rbXYYH.UseVisualStyleBackColor = true;
+            // 
+            // rbJA
+            // 
+            this.rbJA.AutoSize = true;
+            this.rbJA.Location = new System.Drawing.Point(226, 20);
+            this.rbJA.Name = "rbJA";
+            this.rbJA.Size = new System.Drawing.Size(71, 16);
+            this.rbJA.TabIndex = 2;
+            this.rbJA.Text = "国泰君安";
+            this.rbJA.UseVisualStyleBackColor = true;
+            // 
+            // txtSZT
+            // 
+            this.txtSZT.Location = new System.Drawing.Point(73, 19);
+            this.txtSZT.Name = "txtSZT";
+            this.txtSZT.Size = new System.Drawing.Size(100, 21);
+            this.txtSZT.TabIndex = 1;
+            // 
+            // rbNormal
+            // 
+            this.rbNormal.AutoSize = true;
+            this.rbNormal.Checked = true;
+            this.rbNormal.Location = new System.Drawing.Point(20, 20);
+            this.rbNormal.Name = "rbNormal";
+            this.rbNormal.Size = new System.Drawing.Size(47, 16);
+            this.rbNormal.TabIndex = 0;
+            this.rbNormal.TabStop = true;
+            this.rbNormal.Text = "普通";
+            this.rbNormal.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label14.ForeColor = System.Drawing.Color.Red;
+            this.label14.Location = new System.Drawing.Point(26, 722);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(194, 12);
+            this.label14.TabIndex = 23;
+            this.label14.Text = "*使用工具造成的风险请自行承担";
+            // 
+            // txtFcBAT
+            // 
+            this.txtFcBAT.Location = new System.Drawing.Point(26, 610);
+            this.txtFcBAT.Multiline = true;
+            this.txtFcBAT.Name = "txtFcBAT";
+            this.txtFcBAT.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtFcBAT.Size = new System.Drawing.Size(610, 89);
+            this.txtFcBAT.TabIndex = 22;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(24, 579);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(95, 12);
+            this.label13.TabIndex = 21;
+            this.label13.Text = "分仓检查脚本串:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(24, 448);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(71, 12);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "FileCopy串:";
+            // 
+            // txtFileCopy
+            // 
+            this.txtFileCopy.Location = new System.Drawing.Point(26, 469);
+            this.txtFileCopy.Multiline = true;
+            this.txtFileCopy.Name = "txtFileCopy";
+            this.txtFileCopy.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtFileCopy.Size = new System.Drawing.Size(610, 89);
+            this.txtFileCopy.TabIndex = 18;
             // 
             // tabPage2
             // 
@@ -289,7 +405,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(649, 380);
+            this.tabPage2.Size = new System.Drawing.Size(657, 780);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "产品删除";
             // 
@@ -332,12 +448,15 @@
             // 
             // tbDelFilePath
             // 
+            this.tbDelFilePath.AllowDrop = true;
             this.tbDelFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.tbDelFilePath.Location = new System.Drawing.Point(202, 23);
             this.tbDelFilePath.Name = "tbDelFilePath";
             this.tbDelFilePath.ReadOnly = true;
             this.tbDelFilePath.Size = new System.Drawing.Size(356, 21);
             this.tbDelFilePath.TabIndex = 4;
+            this.tbDelFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_DragDrop);
+            this.tbDelFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_DragEnter);
             // 
             // btnSelDelFile
             // 
@@ -358,7 +477,7 @@
             this.tabPage3.Controls.Add(this.btnSelCheckFile);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(649, 380);
+            this.tabPage3.Size = new System.Drawing.Size(657, 780);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "检查配置文件格式合法性";
             // 
@@ -383,12 +502,15 @@
             // 
             // tbCheckFilePath
             // 
+            this.tbCheckFilePath.AllowDrop = true;
             this.tbCheckFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.tbCheckFilePath.Location = new System.Drawing.Point(106, 24);
             this.tbCheckFilePath.Name = "tbCheckFilePath";
             this.tbCheckFilePath.ReadOnly = true;
             this.tbCheckFilePath.Size = new System.Drawing.Size(356, 21);
             this.tbCheckFilePath.TabIndex = 17;
+            this.tbCheckFilePath.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_DragDrop);
+            this.tbCheckFilePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_DragEnter);
             // 
             // btnSelCheckFile
             // 
@@ -404,7 +526,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 406);
+            this.ClientSize = new System.Drawing.Size(665, 806);
             this.Controls.Add(this.tabControl1);
             this.Name = "FrmMain";
             this.Text = "分仓配置文件增加&删除产品";
@@ -413,6 +535,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
@@ -456,6 +580,16 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tbCheckFilePath;
         private System.Windows.Forms.Button btnSelCheckFile;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txtFileCopy;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox txtFcBAT;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton rbXYYH;
+        private System.Windows.Forms.RadioButton rbJA;
+        private System.Windows.Forms.TextBox txtSZT;
+        private System.Windows.Forms.RadioButton rbNormal;
     }
 }
 
